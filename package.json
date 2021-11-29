@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/Samarthya2912/Winter-Project-Backend#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
