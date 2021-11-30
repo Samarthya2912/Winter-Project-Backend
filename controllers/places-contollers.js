@@ -1,5 +1,5 @@
 const HttpError = require("../models/http-error");
-const uuid = require('uuid').v4;
+const uuid = require("uuid").v4;
 
 const DUMMY_PLACES = [
   {
@@ -31,7 +31,9 @@ const getPlaceByUserID = (req, res, next) => {
   const places = DUMMY_PLACES.filter((place) => place.creator === uid);
 
   if (!places.length) {
-    return next(new HttpError('Could not find any place for the given User ID.', 404));
+    return next(
+      new HttpError("Could not find any place for the given User ID.", 404)
+    );
   }
 
   res.json({ places });
@@ -46,13 +48,57 @@ const createPlace = (req, res, next) => {
     description,
     address,
     location: coordinates,
-    creator
-  }
+    creator,
+  };
 
   DUMMY_PLACES.push(createdPlace);
   res.status(201).json({ place: createdPlace });
-}
+};
+
+const modifyPlace = (req, res, next) => {
+  const pid = req.params.pid;
+  const { title, description } = req.body;
+
+  const updatedPlace = {
+    ...DUMMY_PLACES.find((place) => {
+      return place.id === pid;
+    }),
+  };
+  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === pid);
+
+  if (placeIndex === -1) {
+    return next(new HttpError("Could not find place with the given ID.", 404));
+  }
+
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatedPlace;
+
+  res.status(200).json({ place: updatedPlace });
+};
+
+const deletePlace = (req, res, next) => {
+  const pid = req.params.pid;
+
+  let found = false;
+
+  for (let i = 0; i < DUMMY_PLACES.length; i++) {
+    if (DUMMY_PLACES[i].id === pid) {
+      DUMMY_PLACES.splice(i, 1);
+      found = true;
+    }
+  }
+
+  if (!found) {
+    return next(new HttpError("Could not find place with the given ID.", 404));
+  }
+
+  res.status(200).json({ message: "Deleted" });
+};
 
 exports.getPlaceByID = getPlaceByID;
 exports.getPlaceByUserID = getPlaceByUserID;
 exports.createPlace = createPlace;
+exports.modifyPlace = modifyPlace;
+exports.deletePlace = deletePlace;
