@@ -1,6 +1,7 @@
 const HttpError = require("../models/http-error");
 const uuid = require("uuid").v4;
 const { validationResult } = require("express-validator");
+const getCoordinates = require("../utils/geocoder");
 
 const DUMMY_PLACES = [
   {
@@ -47,14 +48,14 @@ const createPlace = (req, res, next) => {
     return next(new HttpError("Invalid input.", 422));
   }
 
-  const { title, description, address, coordinates, creator } = req.body;
+  const { title, description, address, creator } = req.body;
 
   const createdPlace = {
     id: uuid(),
     title,
     description,
     address,
-    location: coordinates,
+    location: getCoordinates(address),
     creator,
   };
 
