@@ -1,5 +1,6 @@
 const HttpError = require("../models/http-error");
 const uuid = require("uuid").v4;
+const { validationResult } = require("express-validator");
 
 const DUMMY_USERS = [
   {
@@ -15,6 +16,12 @@ const getAllUsers = (req, res, next) => {
 };
 
 const signup = (req, res, next) => {
+  const { errors } = validationResult(req);
+
+  if(errors.length) {
+    return next(new HttpError("Invalid input", 422));
+  }
+
   const { name, email, password } = req.body;
 
   const exisitingUser = DUMMY_USERS.find(user => user.email === email);
@@ -34,6 +41,12 @@ const signup = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
+  const { errors } = validationResult(req);
+
+  if(errors.length) {
+    return next(new HttpError("Invalid input", 422));
+  }
+  
   const { email, password } = req.body;
 
   const indentifiedUser = DUMMY_USERS.find(user => user.email === email);
