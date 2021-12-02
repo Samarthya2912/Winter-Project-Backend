@@ -1,5 +1,7 @@
 const express = require("express");
 const HttpError = require("./models/http-error");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv").config();
 
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-route");
@@ -25,6 +27,11 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unknown error occured!" });
 });
 
-app.listen(5000, () => {
-  console.log("SERVER STARTED ON PORT 5000.");
-});
+mongoose.connect(process.env.DB_URI)
+.then(() => {
+  app.listen(5000, () => {
+    console.log("SERVER STARTED ON PORT 5000.");
+  });
+})
+.catch(err => console.error(err))
+
