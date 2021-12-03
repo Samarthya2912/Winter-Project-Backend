@@ -83,9 +83,9 @@ const createPlace = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await createdPlace.save();
+    await createdPlace.save({ session: sess });
     await user.places.push(createdPlace);
-    await user.save();
+    await user.save({ session: sess });
     sess.commitTransaction();
   } catch (error) {
     return next(new HttpError(error.message, 500));
@@ -129,18 +129,31 @@ const modifyPlace = async (req, res, next) => {
 const deletePlace = async (req, res, next) => {
   const pid = req.params.pid;
 
+  let identifiedPlace;
+  try {
+    identifiedPlace = await Place.findById(pid);
+    await identifiedPlace.populate('creator');
+  } catch(error) {
+    return next(new HttpError(error.message, 500));
+  }
+
+  if(!identifiedPlace) {
+    return next(new HttpError('No such place exists.', 404));
+  }
+
   let deletedPlace;
   try {
-    deletedPlace = await Place.findByIdAndDelete(pid);
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    identifiedPlace.remove({ session: sess });
+    identifiedPlace.creator.places.pull(identifiedPlace);
+    identifiedPlace.creator.save({ session: sess });
+    sess.commitTransaction();
   } catch (error) {
     return next(new HttpError(error.message, 500));
   }
 
-  if (!deletedPlace) {
-    return next(new HttpError("Could not find any such place", 404));
-  }
-
-  res.status(200).json({ place: deletedPlace.toObject({ getters: true }) });
+  res.status(200).json({ place: identifiedPlace.toObject({ getters: true }) });
 };
 
 exports.getPlaceByID = getPlaceByID;
