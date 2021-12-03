@@ -29,31 +29,31 @@ const getPlaceByID = async (req, res, next) => {
 
 const getPlaceByUserID = async (req, res, next) => {
   const uid = req.params.uid;
-  // let places;
+  let places;
 
-  // try {
-  //   places = await Place.find({ creator: uid });
-  // } catch (error) {
-  //   return next(new HttpError(error.message, 500));
-  // }
-
-  // if (!places.length) {
-  //   return next(
-  //     new HttpError("Could not find any place for the given User ID.", 404)
-  //   );
-  // }
-
-  let identifiedUser;
   try {
-    identifiedUser = await User.findById(uid).populate('places');
-  } catch(error) {
+    places = await Place.find({ creator: uid });
+  } catch (error) {
     return next(new HttpError(error.message, 500));
   }
+
+  if (!places.length) {
+    return next(
+      new HttpError("Could not find any place for the given User ID.", 404)
+    );
+  }
+
+  // let identifiedUser;
+  // try {
+  //   identifiedUser = await User.findById(uid).populate('places');
+  // } catch(error) {
+  //   return next(new HttpError(error.message, 500));
+  // }
   
-  // res.json({
-  //   places: places.map((place) => place.toObject({ getters: true })),
-  // });
-  res.json({ places: identifiedUser.places.map(place => place.toObject({ getters: true })) });
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
+  // res.json({ places: identifiedUser.places.map(place => place.toObject({ getters: true })) });
 };
 
 const createPlace = async (req, res, next) => {
