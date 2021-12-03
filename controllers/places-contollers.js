@@ -5,20 +5,6 @@ const getCoordinates = require("../utils/geocoder");
 const mongoose = require("mongoose");
 const Place = require("../models/place");
 
-const DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the tallest buidings in the world!",
-    address: "20 W 34th St, New York, NY 10001, United States",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878531,
-    },
-    creator: "u1",
-  },
-];
-
 const getPlaceByID = async (req, res, next) => {
   const pid = req.params.pid;
   let place;

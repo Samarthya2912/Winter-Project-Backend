@@ -3,15 +3,6 @@ const uuid = require("uuid").v4;
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
 
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "samarthya",
-    email: "samarthya55@gmail.com",
-    password: "pass123",
-  },
-];
-
 const getAllUsers = async (req, res, next) => {
   let users;
   try {
@@ -29,13 +20,13 @@ const signup = async (req, res, next) => {
     return next(new HttpError("Invalid input", 422));
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let createdUser = new User({
     name,
     email,
     password,
-    places,
+    places: [],
     image: "https://avatars.githubusercontent.com/u/75770382?s=40&v=4",
   });
 
