@@ -10,6 +10,17 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.use((req, res, next) => {
+  // cors headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
+
 app.use("/api/places", placesRoutes); // => /api/places/...
 app.use("/api/users", usersRoutes);
 
@@ -27,11 +38,11 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unknown error occured!" });
 });
 
-mongoose.connect(process.env.DB_URI)
-.then(() => {
-  app.listen(5000, () => {
-    console.log("SERVER STARTED ON PORT 5000.");
-  });
-})
-.catch(err => console.error(err))
-
+mongoose
+  .connect(process.env.DB_URI)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log("SERVER STARTED ON PORT 5000.");
+    });
+  })
+  .catch((err) => console.error(err));
