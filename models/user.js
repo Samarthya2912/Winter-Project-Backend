@@ -9,6 +9,6 @@ const userSchema = new Schema({
     places: [{ type: Types.ObjectId, required: true, ref: 'Place' }]
 })
 
-userSchema.plugin(uniqueValidator);
+// userSchema.plugin(uniqueValidator);
 
 module.exports = new model('User', userSchema);
