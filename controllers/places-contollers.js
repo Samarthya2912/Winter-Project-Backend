@@ -38,9 +38,7 @@ const getPlaceByUserID = async (req, res, next) => {
   }
 
   if (!places.length) {
-    return next(
-      new HttpError("Could not find any place for the given User ID.", 404)
-    );
+    return res.json({ places: [] })
   }
 
   // let identifiedUser;
@@ -114,13 +112,13 @@ const modifyPlace = async (req, res, next) => {
   }
 
   const pid = req.params.pid;
-  const { title, description } = req.body;
+  const { title, address, description } = req.body;
 
   let updatedPlace;
   try {
     updatedPlace = await Place.findByIdAndUpdate(
       pid,
-      { title, description },
+      { title, description, address },
       { returnDocument: "after" }
     );
   } catch (error) {

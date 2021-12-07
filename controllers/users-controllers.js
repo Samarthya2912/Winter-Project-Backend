@@ -55,7 +55,7 @@ const login = async (req, res, next) => {
     if (!identifiedUser) {
       return next(new HttpError("Please signup first", 401));
     } else if (identifiedUser.password === password) {
-      res.json({ message: "Logged in!!" });
+      res.json({ message: "Logged in!!", user: identifiedUser.toObject({ getters: true }) });
     } else {
       return next(new HttpError("Wrong password", 401));
     }
